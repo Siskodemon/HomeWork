@@ -1,19 +1,14 @@
-package server;
+package server.client;
+
+import server.server.ServerWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
-public class ClientGUI extends JFrame {
+public class ClientGUI extends JFrame implements ClientView{
     public static final int WIDTH = 400;
     public static final int HEIGHT = 300;
-
-    private ServerWindow server;
-    private boolean connected;
-    private String name;
 
     JTextArea log;
     JTextField tfIPAddress, tfPort, tfLogin, tfMessage;
@@ -21,8 +16,10 @@ public class ClientGUI extends JFrame {
     JButton btnLogin, btnSend;
     JPanel headerPanel;
 
-    ClientGUI(ServerWindow server){
-        this.server = server;
+    private Client client;
+
+    public ClientGUI(ServerWindow server){
+        this.client = new Client(this, server);
 
         setSize(WIDTH, HEIGHT);
         setResizable(false);
@@ -34,45 +31,29 @@ public class ClientGUI extends JFrame {
         setVisible(true);
     }
 
-    public void answer(String text){
+    private void connectToServer() {
+        if (client.connectToServer(tfLogin.getText())){
+            hideHeaderPanel(false);
+        }
+    }
+
+    @Override
+    public void showMessage(String text) {
         appendLog(text);
     }
 
-    private void connectToServer() {
-        if (server.connectUser(this)){
-            appendLog("Вы успешно подключились!\n");
-            headerPanel.setVisible(false);
-            connected = true;
-            name = tfLogin.getText();
-            String log = server.getLog();
-            if (log != null){
-                appendLog(log);
-            }
-        } else {
-            appendLog("Подключение не удалось");
-        }
-    }
-
     public void disconnectFromServer() {
-        if (connected) {
-            headerPanel.setVisible(true);
-            connected = false;
-            server.disconnectUser(this);
-            appendLog("Вы были отключены от сервера!");
-        }
+        hideHeaderPanel(true);
+        client.disconnect();
     }
 
-    public void message(){
-        if (connected){
-            String text = tfMessage.getText();
-            if (!text.equals("")){
-                server.message(name + ": " + text);
-                tfMessage.setText("");
-            }
-        } else {
-            appendLog("Нет подключения к серверу");
-        }
+    private void hideHeaderPanel(boolean visible){
+        headerPanel.setVisible(visible);
+    }
 
+    public void sendMessage(){
+        client.sendMessage(tfMessage.getText());
+        tfMessage.setText("");
     }
 
     private void appendLog(String text){
@@ -122,7 +103,7 @@ public class ClientGUI extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == '\n'){
-                    message();
+                    sendMessage();
                 }
             }
         });
@@ -130,7 +111,7 @@ public class ClientGUI extends JFrame {
         btnSend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                message();
+                sendMessage();
             }
         });
         panel.add(tfMessage);
@@ -139,8 +120,10 @@ public class ClientGUI extends JFrame {
     }
 
     @Override
-    public int getDefaultCloseOperation() {
-        disconnectFromServer();
-        return super.getDefaultCloseOperation();
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if (e.getID() == WindowEvent.WINDOW_CLOSING){
+            disconnectFromServer();
+        }
     }
 }
