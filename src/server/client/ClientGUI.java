@@ -1,5 +1,6 @@
 package server.client;
 
+import server.server.Server;
 import server.server.ServerWindow;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class ClientGUI extends JFrame implements ClientView{
 
     private Client client;
 
-    public ClientGUI(ServerWindow server){
+    public ClientGUI(Server server){
         this.client = new Client(this, server);
 
         setSize(WIDTH, HEIGHT);

@@ -1,14 +1,15 @@
 package server.client;
 
+import server.server.Server;
 import server.server.ServerWindow;
 
 public class Client {
     private String name;
     private ClientView clientView;
-    private ServerWindow server;
+    private Server server;
     private boolean connected;
 
-    public Client(ClientView clientView, ServerWindow serverWindow) {
+    public Client(ClientView clientView, Server serverWindow) {
         this.clientView = clientView;
         this.server = serverWindow;
     }

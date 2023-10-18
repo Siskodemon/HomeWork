@@ -15,13 +15,11 @@ import java.util.List;
 public class ServerWindow extends JFrame {
     public static final int WIDTH = 400;
     public static final int HEIGHT = 300;
-    public static final String LOG_PATH = "src/server/log.txt";
 
-    List<ClientGUI> clientGUIList;
 
     JButton btnStart, btnStop;
     JTextArea log;
-    boolean work;
+
 
     public ServerWindow(){
         clientGUIList = new ArrayList<>();
@@ -37,26 +35,11 @@ public class ServerWindow extends JFrame {
         setVisible(true);
     }
 
-    public boolean connectUser(Client client){
-        if (!work){
-            return false;
-        }
-        clientGUIList.add(client);
-        return true;
-    }
 
-    public String getHistory() {
-        return readLog();
-    }
 
-    public void disconnectUser(Client clientGUI){
-        clientGUIList.remove(clientGUI);
-        if (clientGUI != null){
-            clientGUI.disconnectFromServer();
-        }
-    }
 
-    public void sendMessage(String text){
+
+        public void sendMessage(String text){
         if (!work){
             return;
         }
@@ -72,8 +55,8 @@ public class ServerWindow extends JFrame {
         }
     }
 
-    private void saveInLog(String text){
-        try (FileWriter writer = new FileWriter(LOG_PATH, true)){
+    private void saveInLog(Server server, String text){
+        try (FileWriter writer = new FileWriter(server.LOG_PATH, true)){
             writer.write(text);
             writer.write("\n");
         } catch (Exception e){
@@ -81,20 +64,7 @@ public class ServerWindow extends JFrame {
         }
     }
 
-    private String readLog(){
-        StringBuilder stringBuilder = new StringBuilder();
-        try (FileReader reader = new FileReader(LOG_PATH);){
-            int c;
-            while ((c = reader.read()) != -1){
-                stringBuilder.append((char) c);
-            }
-            stringBuilder.delete(stringBuilder.length()-1, stringBuilder.length());
-            return stringBuilder.toString();
-        } catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
+
 
     private void appendLog(String text){
         log.append(text + "\n");
