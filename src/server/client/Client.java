@@ -6,20 +6,20 @@ import server.server.ServerWindow;
 public class Client {
     private String name;
     private ClientView clientView;
-    private Server server;
+    private ServerWindow server;
     private boolean connected;
 
-    public Client(ClientView clientView, Server serverWindow) {
+    public Client(ClientView clientView, ServerWindow serverWindow) {
         this.clientView = clientView;
         this.server = serverWindow;
     }
 
     public boolean connectToServer(String name){
         this.name = name;
-        if (server.connectUser(this)){
+        if (server.cheackConnectServer(this)){
             printText("Вы успешно подключились!\n");
             connected = true;
-            String log = server.getHistory();
+            String log = server.loadChathistory();
             if (log != null){
                 printText(log);
             }
@@ -48,9 +48,8 @@ public class Client {
     public void disconnect(){
         if (connected) {
             connected = false;
-            clientView.disconnectFromServer();
-            server.disconnectUser(this);
-            printText("Вы были отключены от сервера!");
+           // clientView.disconnectFromServer(); // Непонимаю зачем делать это действие. В интерфейсе нет реализации
+            printText(server.disconnectUser(this));
         }
     }
 

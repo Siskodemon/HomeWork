@@ -7,10 +7,11 @@ import server.client.ClientView;
 import java.io.FileReader;
 import java.util.List;
 
-public class Server implements Repositoriy {
+public class Server {
     boolean work;
     public static final String LOG_PATH = "src/server/log.txt";
     List<Client> clientList;
+
     public boolean connectUser(Client client){
         if (!work){
             return false;
@@ -38,10 +39,11 @@ public class Server implements Repositoriy {
         }
     }
 
-    public void disconnectUser(Client client){
+    public String disconnectUser(Client client){
         clientList.remove(client);
         if (client != null){
-            client.disconnectFromServer();
-        }
+            return "Вы были отключены от сервера!";
+        }else return "Вы не были подключены к серверу!";
+
     }
 }

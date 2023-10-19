@@ -2,6 +2,7 @@ package server.server;
 
 import server.client.Client;
 import server.client.ClientGUI;
+import server.client.ClientView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,16 +13,17 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerWindow extends JFrame {
+public class ServerWindow extends JFrame{
     public static final int WIDTH = 400;
     public static final int HEIGHT = 300;
 
-
+    private Server server;
     JButton btnStart, btnStop;
     JTextArea log;
 
 
-    public ServerWindow(){
+    public ServerWindow(Server server){
+        this.server = server;
         clientGUIList = new ArrayList<>();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,10 +36,6 @@ public class ServerWindow extends JFrame {
 
         setVisible(true);
     }
-
-
-
-
 
         public void sendMessage(String text){
         if (!work){
@@ -64,12 +62,17 @@ public class ServerWindow extends JFrame {
         }
     }
 
-
+public boolean cheackConnectServer(Client client){
+        return server.connectUser(client);
+}
 
     private void appendLog(String text){
         log.append(text + "\n");
     }
 
+    public String loadChathistory(){
+        return server.getHistory();
+    }
     private void createPanel() {
         log = new JTextArea();
         add(log);
@@ -113,4 +116,10 @@ public class ServerWindow extends JFrame {
         panel.add(btnStop);
         return panel;
     }
+
+    public String disconnectUser(Client client){
+        return server.disconnectUser(client);
+    }
 }
+
+

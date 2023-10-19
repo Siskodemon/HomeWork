@@ -19,13 +19,13 @@ public class ClientGUI extends JFrame implements ClientView{
 
     private Client client;
 
-    public ClientGUI(Server server){
-        this.client = new Client(this, server);
+    public ClientGUI(ServerWindow serverWindow){
+        this.client = new Client(this, serverWindow);
 
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setTitle("Chat client");
-        setLocation(server.getX() - 500, server.getY());
+        setLocation(serverWindow.getX() - 500, serverWindow.getY());
 
         createPanel();
 
