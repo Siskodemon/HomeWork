@@ -24,7 +24,7 @@ public class ServerWindow extends JFrame{
 
     public ServerWindow(Server server){
         this.server = server;
-        clientGUIList = new ArrayList<>();
+        //clientGUIList = new List<Client>();
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
@@ -38,22 +38,19 @@ public class ServerWindow extends JFrame{
     }
 
         public void sendMessage(String text){
-        if (!work){
-            return;
-        }
-//        text += "";
+        if (!server.getWork()) return;
         appendLog(text);
         answerAll(text);
         saveInLog(text);
     }
 
     private void answerAll(String text){
-        for (ClientGUI clientGUI: clientGUIList){
-            clientGUI.answer(text);
+        for (Client client: server.getClientList()){
+            client.serverAnswer(text);
         }
     }
 
-    private void saveInLog(Server server, String text){
+    private void saveInLog(String text){
         try (FileWriter writer = new FileWriter(server.LOG_PATH, true)){
             writer.write(text);
             writer.write("\n");
@@ -87,10 +84,10 @@ public boolean cheackConnectServer(Client client){
         btnStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (work){
+                if (server.getWork()){
                     appendLog("Сервер уже был запущен");
                 } else {
-                    work = true;
+                    server.setWork(true);
                     appendLog("Сервер запущен!");
                 }
             }
@@ -99,13 +96,11 @@ public boolean cheackConnectServer(Client client){
         btnStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!work){
+                if (!server.getWork()){
                     appendLog("Сервер уже был остановлен");
                 } else {
-                    work = false;
-                    for (ClientGUI clientGUI: clientGUIList){
-                        disconnectUser(clientGUI);
-                    }
+                    server.setWork(false);
+                    if (server.getClientList() != null) disconnectAllUser();
                     //TODO поправить удаление
                     appendLog("Сервер остановлен!");
                 }
@@ -119,6 +114,10 @@ public boolean cheackConnectServer(Client client){
 
     public String disconnectUser(Client client){
         return server.disconnectUser(client);
+    }
+
+    public void disconnectAllUser(){
+        server.getClientList().clear();
     }
 }
 

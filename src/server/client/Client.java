@@ -25,7 +25,7 @@ public class Client {
             }
             return true;
         } else {
-            printText("Подключение не удалось");
+            printText("Подключение не удалось!!\n");
             return false;
         }
     }
